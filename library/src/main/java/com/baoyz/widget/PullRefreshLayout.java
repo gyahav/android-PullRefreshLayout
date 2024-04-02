@@ -1,10 +1,11 @@
 package com.baoyz.widget;
 
+import static android.view.MotionEvent.ACTION_POINTER_DOWN;
+import static android.view.MotionEvent.ACTION_POINTER_UP;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import androidx.core.view.MotionEventCompat;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -213,7 +214,7 @@ public class PullRefreshLayout extends ViewGroup {
                 mIsBeingDragged = false;
                 mActivePointerId = INVALID_POINTER;
                 break;
-            case MotionEventCompat.ACTION_POINTER_UP:
+            case ACTION_POINTER_UP:
                 onSecondaryPointerUp(ev);
                 break;
         }
@@ -228,16 +229,16 @@ public class PullRefreshLayout extends ViewGroup {
             return super.onTouchEvent(ev);
         }
 
-        final int action = MotionEventCompat.getActionMasked(ev);
+        final int action = ev.getActionMasked();
 
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
-                final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+                final int pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     return false;
                 }
 
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
+                final float y = ev.getY(pointerIndex);
                 final float yDiff = y - mInitialMotionY;
                 int targetY;
                 if (mRefreshing) {
@@ -301,11 +302,11 @@ public class PullRefreshLayout extends ViewGroup {
                 setTargetOffsetTop(targetY - mCurrentOffsetTop, true);
                 break;
             }
-            case MotionEventCompat.ACTION_POINTER_DOWN:
-                final int index = MotionEventCompat.getActionIndex(ev);
-                mActivePointerId = MotionEventCompat.getPointerId(ev, index);
+            case ACTION_POINTER_DOWN:
+                final int index = ev.getActionIndex();
+                mActivePointerId = ev.getPointerId(index);
                 break;
-            case MotionEventCompat.ACTION_POINTER_UP:
+            case ACTION_POINTER_UP:
                 onSecondaryPointerUp(ev);
                 break;
             case MotionEvent.ACTION_UP:
@@ -320,8 +321,9 @@ public class PullRefreshLayout extends ViewGroup {
                     }
                     return false;
                 }
-                final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
+                final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+                if(pointerIndex < 0) return false;
+                final float y = ev.getY(pointerIndex);
                 final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                 mIsBeingDragged = false;
                 if (overscrollTop > mTotalDragDistance) {
@@ -454,20 +456,20 @@ public class PullRefreshLayout extends ViewGroup {
     };
 
     private void onSecondaryPointerUp(MotionEvent ev) {
-        final int pointerIndex = MotionEventCompat.getActionIndex(ev);
-        final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
+        final int pointerIndex = ev.getActionIndex();
+        final int pointerId = ev.getPointerId(pointerIndex);
         if (pointerId == mActivePointerId) {
             final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-            mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
+            mActivePointerId = ev.getPointerId(newPointerIndex);
         }
     }
 
     private float getMotionEventY(MotionEvent ev, int activePointerId) {
-        final int index = MotionEventCompat.findPointerIndex(ev, activePointerId);
+        final int index = ev.findPointerIndex(activePointerId);
         if (index < 0) {
             return -1;
         }
-        return MotionEventCompat.getY(ev, index);
+        return ev.getY(index);
     }
 
     private void setTargetOffsetTop(int offset, boolean requiresUpdate) {
@@ -491,7 +493,7 @@ public class PullRefreshLayout extends ViewGroup {
                 return mTarget.getScrollY() > 0;
             }
         } else {
-            return ViewCompat.canScrollVertically(mTarget, -1);
+            return mTarget.canScrollVertically(-1);
         }
     }
 
