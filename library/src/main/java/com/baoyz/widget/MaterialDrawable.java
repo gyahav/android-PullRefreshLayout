@@ -33,10 +33,9 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -60,7 +59,7 @@ class MaterialDrawable extends RefreshDrawable implements Animatable {
     private static final Interpolator START_CURVE_INTERPOLATOR = new StartCurveInterpolator();
     private static final Interpolator EASE_INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
-    @Retention(RetentionPolicy.CLASS)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({LARGE, DEFAULT})
     public @interface ProgressDrawableSize {
     }

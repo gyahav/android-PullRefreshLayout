@@ -3,8 +3,8 @@ package com.baoyz.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -93,7 +93,7 @@ public class PullRefreshLayout extends ViewGroup {
         mRefreshView.setVisibility(View.GONE);
         addView(mRefreshView, 0);
         setWillNotDraw(false);
-        ViewCompat.setChildrenDrawingOrderEnabled(this, true);
+        setChildrenDrawingOrderEnabled(true);
     }
 
     public void setColorSchemeColors(int... colorSchemeColors) {
@@ -175,14 +175,14 @@ public class PullRefreshLayout extends ViewGroup {
             return false;
         }
 
-        final int action = MotionEventCompat.getActionMasked(ev);
+        final int action = ev.getActionMasked();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (!mRefreshing) {
                     setTargetOffsetTop(0, true);
                 }
-                mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
+                mActivePointerId = ev.getPointerId(0);
                 mIsBeingDragged = false;
                 final float initialMotionY = getMotionEventY(ev, mActivePointerId);
                 if (initialMotionY == -1) {
